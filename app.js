@@ -4,8 +4,19 @@ const contextPathWithAPIVersion = "/courseregis/api/v1"
 const courseMaterialRoutes = require("./routes/courseMaterialRoutes")
 const mongoose = require("mongoose")
 require('dotenv').config()
+const cors = require("cors")
 
 const PORT = process.env.PORT || 3500
+app.use(express.json())
+
+//handle CORS
+app.use(cors({
+    origin: ['http://localhost:3000'],
+    methods: ['GET','POST','PATCH','PUT','DELETE','OPTION'],
+    allowedHeaders: ['Content-Type','Authorization'],
+    credentials: true
+}
+))
 
 app.use(contextPathWithAPIVersion,courseMaterialRoutes)
 app.get(`${contextPathWithAPIVersion}/heartbeat`,(req,res)=>{
