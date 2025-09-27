@@ -1,9 +1,11 @@
 const express = require("express")
 const app = express()
-const PORT = 3600
 const contextPathWithAPIVersion = "/courseregis/api/v1"
 const courseMaterialRoutes = require("./routes/courseMaterialRoutes")
 const mongoose = require("mongoose")
+require('dotenv').config()
+
+const PORT = process.env.PORT || 3500
 
 app.use(contextPathWithAPIVersion,courseMaterialRoutes)
 app.get(`${contextPathWithAPIVersion}/heartbeat`,(req,res)=>{
