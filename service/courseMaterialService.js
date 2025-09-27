@@ -1,14 +1,14 @@
-
+const CourseMaterial  = require("../model/courseMaterialModel")
 //getAll
 
 async function getAllCourseMaterials(){
-
+   return CourseMaterial.find();
 }
 
 // save
 
-async function addCourseMaterial(){
-
+async function addCourseMaterial(newMaterial){
+   new CourseMaterial(newMaterial).save();
 }
 //delete
 async function deleteCourseMaterial(){
