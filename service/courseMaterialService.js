@@ -16,8 +16,8 @@ async function deleteCourseMaterial(){
 
 }
 //update
-async function updateCoureMaterial(){
-
+async function updateCoureMaterial(materialId, updateData){
+   return CourseMaterial.findOneAndUpdate({materialId: materialId},updateData,{ new: true})
 }
 
 module.exports = { getAllCourseMaterials, addCourseMaterial, updateCoureMaterial,deleteCourseMaterial }

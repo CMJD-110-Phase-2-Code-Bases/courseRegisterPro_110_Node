@@ -52,10 +52,35 @@ router.post(courseMaterialURL, upload.single("material"), async (req,res)=>{
     }
     
 })
-// // update CM
-// router.patch(`${courseMaterialURL}/:materialId`,courseMat,(req,res)=>{
+// update CM
+router.patch(`${courseMaterialURL}/:materialId` ,upload.single("material") ,async (req,res)=>{
+    console.log('Call update material')
+    const { materialId } = req.params;
+    console.log("Mat Id",materialId)
     
-// })
+    if(!materialId){
+        return res.status(400).json({error : "Material ID is required"})
+    }
+
+    const updateData = {
+        ...(req.body.fileName && { fileName: req.body.fileName}),
+        ...(req.body.courseId && { courseId: req.body.courseId}),
+        ...(req.body.materialType && { materialType: req.body.materialType}),
+        ...(req.file && { material: req.file.buffer.toString("base64")}),
+    }
+
+    const updatedMat = await courseMaterialService.updateCoureMaterial(materialId, updateData)
+    if(!updatedMat){
+        return res.status(400).json({error: "Material Not found"});
+    }
+        return res.status(204).send();
+
+
+
+
+
+
+})
 // // delete CM
 // router.delete(`${courseMaterialURL}/:materialId`,(req,res)=>{
     
