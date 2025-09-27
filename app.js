@@ -2,6 +2,7 @@ const express = require("express")
 const app = express()
 const contextPathWithAPIVersion = "/courseregis/api/v1"
 const courseMaterialRoutes = require("./routes/courseMaterialRoutes")
+const authRoutes = require("./routes/userRoute")
 const mongoose = require("mongoose")
 require('dotenv').config()
 const cors = require("cors")
@@ -19,6 +20,8 @@ app.use(cors({
 ))
 
 app.use(contextPathWithAPIVersion,courseMaterialRoutes)
+app.use(contextPathWithAPIVersion,authRoutes)
+
 app.get(`${contextPathWithAPIVersion}/heartbeat`,(req,res)=>{
     res.send("Course Regis Pro is running")
 })

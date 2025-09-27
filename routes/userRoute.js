@@ -3,22 +3,38 @@ const express = require('express')
 const router = express.Router()
 const userService = require("../service/userService")
 const User = require("../model/userModel")
-const { v4: uuidv4 } = require("uuid")
 const jwt = require("jsonwebtoken")
 require('dotenv').config()
+const bcrypt = require('bcryptjs')
 
 const jwtSecret = process.env.JWT_SECRET
 
+if(!jwtSecret){
+    console.error("Cannot find JWT Secret")
+    process.exit(1)
+}
+
 //Sign in
 router.post(`${authUrl}/signin`,async (req,res)=>{
+    const  { email, password } = req.body;
+    if(!email || !password){
+        return res.status(400).json({"error":"Missing required input fileds"})
+    }
     try{
-    
-
-
-
+      const user =  await User.findOne({ email })
+      if(!user){
+        return res.status(401).json({"error":"Invalid Credentials"})
+      }
+      const isMatch = await bcrypt.compare(password, user.password);
+      if(!isMatch){
+        return res.status(401).json({"error":"Invalid Credentials"}) 
+      }
+      //Create Tokrn
+      const token = jwt.sign({ userId: user.email},jwtSecret, { expiresIn: '1h'})
+      res.json({token})
 
     }catch(err){
-        console.err("Loging error",err);
+        console.error("Loging error",err);
         res.status(500).json({"error":"Loging fail with internal error"})
     }
 })
@@ -27,11 +43,11 @@ router.post(`${authUrl}/signin`,async (req,res)=>{
 router.post(`${authUrl}/signup`,async (req,res)=>{
     const { firstName, lastName,email,password,role} = req.body
     if(!firstName || !lastName || !email || !password || !role){
-        res.status(400).json({"error":"Missing required input fileds"})
+        return res.status(400).json({"error":"Missing required input fileds"})
     }
     try{
        const createdUser = userService.addUser(req.body);
-       const token = jwt.sign({ userId: user.email},jwtSecret, { expiresIn: '1h'})
+       const token = jwt.sign({ userId: createdUser.email},jwtSecret, { expiresIn: '1h'})
        res.status(201).json({token: token})
 
     }catch(err){
@@ -39,3 +55,5 @@ router.post(`${authUrl}/signup`,async (req,res)=>{
         res.status(500).json({"error":"Loging fail with internal error"})
     }
 })
+
+module.exports = router
