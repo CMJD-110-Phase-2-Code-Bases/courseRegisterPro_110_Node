@@ -16,10 +16,10 @@ const upload = multer({storage: storage})
 router.get(courseMaterialURL, async (req,res)=>{
    try{
        const allMaterials = await courseMaterialService.getAllCourseMaterials()
-       return res.json(allMaterials)
+       return res.json(allMaterials);
    }catch(err){
-        console.error("Error fetching materials ",err)
-        return res.status(500).json({error:"Failed to fetch data"})
+        console.error("Error fetching materials ",err);
+        return res.status(500).json({error:"Failed to fetch data"});
    }
 })
 
@@ -47,8 +47,8 @@ router.post(courseMaterialURL, upload.single("material"), async (req,res)=>{
        res.status(201).json({message: "Saved material"})
 
     }catch(err){
-        console.error("Save error "+err)
-        res.status(500).json({ error: "Saved failed"})
+        console.error("Save error "+err);
+        res.status(500).json({ error: "Saved failed"});
     }
     
 })
@@ -57,9 +57,9 @@ router.patch(`${courseMaterialURL}/:materialId` ,upload.single("material") ,asyn
     console.log('Call update material')
     const { materialId } = req.params;
     console.log("Mat Id",materialId)
-    
+
     if(!materialId){
-        return res.status(400).json({error : "Material ID is required"})
+        return res.status(400).json({error : "Material ID is required"});
     }
 
     const updateData = {
@@ -76,15 +76,31 @@ router.patch(`${courseMaterialURL}/:materialId` ,upload.single("material") ,asyn
         return res.status(204).send();
 
 
+})
+// delete CM
+router.delete(`${courseMaterialURL}/:materialId`,async (req,res)=>{
+    const { materialId } = req.params
+    console.log("Deleting material by id: ",materialId)
+
+    try{
+        const deletedMat = await courseMaterialService.deleteCourseMaterial(materialId)
+        if(!deletedMat){
+            return res.status(400).send("Course material not found")
+        }
+        res.status(204).send();
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send("Cannot process request");
+        
+    }
+
+
 
 
 
 
 })
-// // delete CM
-// router.delete(`${courseMaterialURL}/:materialId`,(req,res)=>{
-    
-// })
 
 module.exports = router
 

@@ -11,8 +11,8 @@ async function addCourseMaterial(newMaterial){
    new CourseMaterial(newMaterial).save();
 }
 //delete
-async function deleteCourseMaterial(){
-
+async function deleteCourseMaterial(materialId){
+    return CourseMaterial.findOneAndDelete({materialId})
 
 }
 //update
